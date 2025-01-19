@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Book {
+  id         Int      @id @default(autoincrement())
+  title      String
+  author     String
+  status     String   @default("available")
+  borrower   String?
+  gr_number  String?
+  class_name String?
+  library    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  genre      String   @default("Uncategorized")
+  borrows    Borrow[]
+  activities Activity[]
+}
+
+model Borrow {
+  id           Int       @id @default(autoincrement())
+  bookId       Int
+  borrowerName String
+  grNumber     String
+  className    String
+  status       String    @default("borrowed")
+  borrowDate   DateTime  @default(now())
+  dueDate      DateTime
+  returnDate   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  book         Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  empId    String   @unique
+  password String
+  library  String
+  activities Activity[]
+}
+
+model Activity {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+  action    String
+  bookId    Int
+  userId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [empId])
+}
+
+model Transaction {
+  id           Int      @id @default(autoincrement())
+  date         DateTime @default(now())
+  borrowId     Int
+  type         String   // "borrow" or "return"
+  status       String   // "completed", "pending", "overdue"
+  borrow       Borrow   @relation(fields: [borrowId], references: [id], onDelete: Cascade)
+}

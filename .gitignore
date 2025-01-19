@@ -1,0 +1,19 @@
+# Dependencies
+node_modules
+.env
+.env.local
+.next
+
+# Large files
+*.exe
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+public/Git-2.47.1-64-bit.exe
+
+# OS files
+.DS_Store
+Thumbs.db
+
